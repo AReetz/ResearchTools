@@ -1,0 +1,35 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ output extension=".cs" #>
+<#@ assembly name="System" #>
+<#	Type[] fpTypes = new [] {
+	typeof(Single), typeof(Double)
+	};
+#>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+public static partial class Maths
+{
+<# foreach (var type in fpTypes) { #>
+	public static <#= type.Name #> StandardDeviationNaive(this IEnumerable<<#= type.Name #>> values)
+	{
+		<#= type.Name #> avg = values.Average();
+        <#= type.Name #> sum = values.Sum(val => (val - avg) * (val - avg));
+        return (<#= type.Name #>)Math.Sqrt(sum / (<#= type.Name #>)values.Count());
+	}
+
+	public static <#= type.Name #> StandardDeviationWelford(this IEnumerable<<#= type.Name #>> values)
+	{
+		<#= type.Name #> m = values.First(), q = default(<#= type.Name #>);
+		UInt64 idx = 1U;
+		foreach (<#= type.Name #> value in values.Skip(1))
+		{
+			q += (idx - 1U) * (value - m) * (value - m) / idx;
+			m += (value - m) / idx;
+			idx++;
+		}
+		return (<#= type.Name #>)Math.Sqrt(q / values.Count());
+	}
+<# } #>
+}

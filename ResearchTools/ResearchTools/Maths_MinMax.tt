@@ -1,0 +1,48 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ output extension=".cs" #>
+<#@ assembly name="System" #>
+<# Type[] allTypes = new [] {
+    typeof(Int16), typeof(Int32), typeof(Int64),
+    typeof(UInt16), typeof(UInt32), typeof(UInt64),
+	typeof(Single), typeof(Double), typeof(Decimal)
+    };
+#>
+using System;
+
+public static partial class Maths
+{
+<# foreach (var type in allTypes) { #>
+	public static <#= type.Name #> MaxVal(<#= type.Name #>[] Values)
+    {
+        Int32 idx;
+        return MaxValIdx(Values, out idx);
+    }
+
+    public static <#= type.Name #> MaxValIdx(<#= type.Name #>[] Values, out Int32 Idx)
+    {
+        <#= type.Name #> maxValue = <#= type.Name #>.MinValue;
+        Idx = Int32.MinValue;
+        for (Int32 i = 0; i < Values.Length; i++) if (Values[i] > maxValue) maxValue = Values[Idx = i];
+        return maxValue;
+    }
+
+    public static <#= type.Name #> MinVal(<#= type.Name #>[] Values)
+    {
+        Int32 idx;
+        return MinValIdx(Values, out idx);
+    }
+
+    public static <#= type.Name #> MinValIdx(<#= type.Name #>[] Values, out Int32 Idx)
+    {
+        <#= type.Name #> minValue = <#= type.Name #>.MaxValue;
+        Idx = Int32.MinValue;
+        for (Int32 i = 0; i < Values.Length; i++) if (Values[i] < minValue) minValue = Values[Idx = i];
+        return minValue;
+    }
+
+	/*public static <#= type.Name #> Random(<#= type.Name #> Min, <#= type.Name #> Max)
+	{
+		return
+	}*/
+<# } #>
+}
